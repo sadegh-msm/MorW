@@ -15,7 +15,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-direction: row;
+  flex-direction: column;
   font-family: "Roboto", sans-serif;
   font-size: 25px;
   line-height: 1.6;
@@ -81,22 +81,27 @@ body {
   transition: background-color 0.3s ease;
   width: 100%;
 }
+
 #name {
   border-radius: 8px;
   background-color: #ffffff;
   border: none;
   padding: 5px;
 }
+
 .radio-group {
   padding-bottom: 21px;
 }
+
 .btn:hover {
   background-color: var(--accent-color);
   font-weight: bold;
 }
+
 #clear {
   width: 78%;
 }
+
 /* Styles for the saved answer area, with a dashed border and column layout */
 .saved-answer-area {
   display: flex;
@@ -106,6 +111,7 @@ body {
   border: 2px dashed gray;
   padding: 10px;
 }
+
 /* .container right {
   border-left: 2px dashed gray;
 } */
