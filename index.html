@@ -4,20 +4,20 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="styles/style.css">
-  <script type="text/javascript" src="scripts/script.js"></script>
-  <title>Document</title>
+  <script type="text/javascript" src="scripts/script.js" defer></script>
+  <title>Gender Prediction Form</title>
 </head>
 <body>
-  <div id="error">
-        Please enter a valid name and select a gender.
+  <div id="error" class="error-message">
+    <!-- Error messages will be handled by JS -->
   </div>
   <div class="main">
     <div class="container left">
       <form id="form">
-        <h1>Mr. or Ms. ?</h1>
+        <h1>Mr. or Ms.?</h1>
         <div class="input-name">
           <label for="name">Name:</label>
-          <input type="text" id="name">
+          <input type="text" id="name" placeholder="Enter your name">
         </div>
         <div class="radio-group">
           <div class="radio-item">

@@ -1,95 +1,96 @@
 const API_URL = "https://api.genderize.io/?name=";
 
 window.addEventListener("DOMContentLoaded", () => {
-  let formValues = {
-    name: "",
-    gender: undefined,
+  // Initialize form values
+  let formValues = { name: "", gender: undefined };
+
+  // Get DOM elements
+  const elements = {
+    nameInput: document.querySelector("#name"),
+    form: document.querySelector("#form"),
+    saveButton: document.querySelector("#save"),
+    genderTxt: document.querySelector("#gender-txt"),
+    genderVal: document.querySelector("#gender-val"),
+    saved: document.querySelector("#saved-answer"),
+    clearButton: document.querySelector("#clear"),
+    error: document.querySelector("#error")
   };
 
-  let lastName;
-  // Get elements from the DOM
-  const nameInput = document.querySelector("#name");
-  const form = document.querySelector("#form");
-  const saveButton = document.querySelector("#save");
-  const genderTxt = document.querySelector("#gender-txt");
-  const genderVal = document.querySelector("#gender-val");
-  const saved = document.querySelector("#saved-answer");
-  const clearButton = document.querySelector("#clear");
-  const error = document.querySelector("#error");
-
-  // Define event listeners
-  nameInput.addEventListener("input", (event) => {
+  // Update name on input change
+  elements.nameInput.addEventListener("input", (event) => {
     formValues.name = event.target.value.trim();
   });
 
-  form.addEventListener("change", () => {
+  // Update gender on radio button change
+  elements.form.addEventListener("change", () => {
     formValues.gender = document.querySelector('input[name="gender"]:checked')?.value;
   });
 
-  form.addEventListener("submit", (event) => {
+  // Handle form submission
+  elements.form.addEventListener("submit", (event) => {
     event.preventDefault();
-    lastName = formValues.name;
-    displayError(''); // Clear any previous errors
+    const lastName = formValues.name;
+    displayError(''); // Clear previous errors
 
     if (!formValues.name) {
       displayError("Please enter a name.");
       return;
     }
 
-    // Display result from local storage if available
-    saved.textContent = localStorage.getItem(lastName) || "No data";
+    // Show loading text
+    elements.genderTxt.textContent = "Loading...";
+    elements.genderVal.textContent = "Loading...";
 
-    // Show loading
-    genderTxt.textContent = "Loading...";
-    genderVal.textContent = "Loading...";
-
-    // Fetch data
-    fetch(`${API_URL}${formValues.name}`)
-      .then((response) => {
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        return response.json();
-      })
-      .then((data) => {
-        if (data.name === null) {
-          throw new Error("Name not available");
-        }
-        if (data.probability == 0) {
-            displayError("the name "+formValues.name+" is not available!")
-        }
-        genderTxt.textContent = data.gender || "Not available";
-        genderVal.textContent = (data.probability * 100).toFixed(2) + '%' || "0%";
-      })
-      .catch((error) => {
-        displayError(`Error: ${error.message}`);
-        genderTxt.textContent = "Gender";
-        genderVal.textContent = "Probability";
-      });
+    fetchGender(formValues.name, lastName);
   });
-  
-    saveButton.addEventListener("click", () => {
-    if (formValues.gender !== undefined && formValues.name !== "") {
+
+  // Save form data to localStorage
+  elements.saveButton.addEventListener("click", () => {
+    if (formValues.gender && formValues.name) {
       localStorage.setItem(formValues.name, formValues.gender);
-      saved.textContent = `Saved: ${formValues.gender}`;
-      displayError(''); // Clear any previous errors
-    }
-      //SHOW ERROR TO USER FOR COMPLETING FORM
-    else {
+      elements.saved.textContent = `Saved: ${formValues.gender}`;
+      displayError('');
+    } else {
       displayError("Please complete the form to save.");
     }
   });
 
-  clearButton.addEventListener("click", () => {
+  // Clear saved data from localStorage
+  elements.clearButton.addEventListener("click", () => {
+    const lastName = formValues.name;
     if (localStorage.getItem(lastName)) {
       localStorage.removeItem(lastName);
-      lastName = ""
-      saved.innerHTML = "Cleared"
+      elements.saved.textContent = "Cleared";
+      displayError('');
     }
   });
 
-  // Function to display errors
+  // Function to fetch gender data
+  function fetchGender(name, lastName) {
+    fetch(`${API_URL}${name}`)
+      .then(response => {
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        return response.json();
+      })
+      .then(data => {
+        if (data.name === null) throw new Error("Name not available");
+        if (data.probability === 0) displayError(`The name ${name} is not available!`);
+
+        elements.genderTxt.textContent = data.gender || "Not available";
+        elements.genderVal.textContent = (data.probability * 100).toFixed(2) + '%' || "0%";
+        elements.saved.textContent = localStorage.getItem(lastName) || "No data";
+      })
+      .catch(error => {
+        displayError(`Error: ${error.message}`);
+        elements.genderTxt.textContent = "Gender";
+        elements.genderVal.textContent = "Probability";
+      });
+  }
+
+  // Function to display error messages
   function displayError(message) {
-    error.textContent = message;
-    error.style.display = message ? 'block' : 'none';
+    elements.error.textContent = message;
+    elements.error.style.display = message ? 'block' : 'none';
   }
 });
 
