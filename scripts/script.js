@@ -37,6 +37,10 @@ window.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    if (!formValues.name.match(/^[a-zA-Z]{1,254}$/)) {
+      displayError("Name must only contain letters and be less than 255 characters.");
+      return;
+    }
     // Show loading text
     elements.genderTxt.textContent = "Loading...";
     elements.genderVal.textContent = "Loading...";
